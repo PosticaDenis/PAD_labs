@@ -25,6 +25,7 @@ public class Client {
             //outToServer.writeBytes(sentence + '\n');
             //modifiedSentence = inFromServer.readLine();
             //System.out.println("FROM SERVER: " + modifiedSentence);
+            collectData();
             clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();

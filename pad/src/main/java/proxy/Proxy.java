@@ -2,63 +2,55 @@ package proxy;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.Properties;
 
 /**
  * Created by c-denipost on 18-Nov-17.
  **/
 public class Proxy {
 
-    private ServerSocket serverSocket;
-    private Socket connectionSocket;
-    private static boolean notConnected = true;
+    private static Properties unicastProperties;
+    private static Properties multicastProperties;
+    private static Properties cProperties;
 
-    private static int multicastPort = 5000;
-    private static String multicastGroup = "228.5.6.7";
-    private static int ttl = 1;
-
-    private static String unicastHost = "localhost";
-    private static String unicastPort = "7777";
+    private ClientConnectionHandler clientConnectionHandler;
+    //private static DataAggregator dataAggregator;
+    //private NodeAgent nodeAgent;
 
     public Proxy(int port) {
 
+
+        unicastProperties = new Properties();
+        multicastProperties = new Properties();
+        cProperties = new Properties();
+
+        //dataAggregator = new DataAggregator();
+        clientConnectionHandler = new ClientConnectionHandler(port);
+        //nodeAgent = new NodeAgent();
+
         try {
-            //String clientSentence;
-            //String capitalizedSentence;
-            serverSocket = new ServerSocket(port);
+            unicastProperties.load(Proxy.class.getResourceAsStream("/proxy/unicast.properties"));
+            multicastProperties.load(Proxy.class.getResourceAsStream("/proxy/multicast.properties"));
+            cProperties.load(Proxy.class.getResourceAsStream("/proxy/cmds.properties"));
 
-            while (notConnected) {
-                connectionSocket = serverSocket.accept();
-                System.out.println("A client has connected.");
-                notConnected = false;
-                //BufferedReader inFromClient =
-                //        new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-                //DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-                //clientSentence = inFromClient.readLine();
-                //System.out.println("Received: " + clientSentence);
-                //capitalizedSentence = clientSentence.toUpperCase() + '\n';
-                //outToClient.writeBytes(capitalizedSentence);
-            }
-
-            signalNodes();
-
+            clientConnectionHandler.start();
+            //dataAggregator.start();
+            //nodeAgent.start();
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            System.err.println("One or more properties file was not found!");
         }
     }
 
-    private void signalNodes() {
+    public static Properties getUnicastProperties() {
+        return unicastProperties;
+    }
 
-        String msg = unicastHost + unicastPort;
+    public static Properties getMulticastProperties() {
+        return multicastProperties;
+    }
 
-        try {
-            InetAddress group = InetAddress.getByName(multicastGroup);
-
-            MulticastSocket multicastSocket = new MulticastSocket(multicastPort);
-
-            DatagramPacket communicate = new DatagramPacket(msg.getBytes(), msg.length(), group, 6789);
-            multicastSocket.send(communicate);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static Properties getcProperties() {
+        return cProperties;
     }
 }

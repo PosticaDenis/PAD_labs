@@ -12,17 +12,17 @@ import java.util.List;
  **/
 public class Node {
 
-    private int connections = 0;
+    //private int connections = 0;
     //private List<NodeConnector> nodeConnectors;
     private List<String> connectedNodes;
     private InetAddress nodeIPAddress;
     private int port;
 
-    private Socket connectionSocket;
+    //private Socket connectionSocket;
     //private
     private static String nodeId;
 
-    private ServerSocket serverNodeSocket;
+    //private ServerSocket serverNodeSocket;
 
     public Node(int port) {
 
@@ -33,6 +33,9 @@ public class Node {
             e.printStackTrace();
         }
 
+        //MulticastHandler mHandler = new MulticastHandler();
+        //mHandler.start();
+
         connectedNodes = new ArrayList<>();             //list of node to which this Node is connected
         nodeId = new RandomString().nextString();         //Node identificator generation
 
@@ -40,15 +43,17 @@ public class Node {
 
         try {
             DatagramSocket nodeSocket = new DatagramSocket(9876);
-            byte[] receiveData = new byte[1024];
+            //byte[] receiveData = new byte[1024];
 
-            while(true)
-            {
-                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                nodeSocket.receive(receivePacket);
-                String sentence = new String( receivePacket.getData());
-                System.out.println("Received a new registration: ");
-            }
+            //while(true)
+            //{
+                //DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                ConnectionHandler connectionHandler = new ConnectionHandler(nodeSocket);
+                connectionHandler.start();
+                //nodeSocket.receive(receivePacket);
+                //String sentence = new String( receivePacket.getData());
+                //System.out.println("Received a new registration: ");
+            //}
         } catch (Exception e) {
             e.printStackTrace();
         }
