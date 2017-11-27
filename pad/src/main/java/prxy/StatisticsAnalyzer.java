@@ -17,6 +17,7 @@ public class StatisticsAnalyzer extends Thread {
     public StatisticsAnalyzer(int nrOfNodes) {
 
         this.nrOfNodes = nrOfNodes;
+        this.dataAggregator = new DataAggregator();
     }
 
     @Override
@@ -28,7 +29,7 @@ public class StatisticsAnalyzer extends Thread {
 
                 TCPProxyForClient.setNrOfNodes(0);
 
-                getMavenTCPData();
+                dataAggregator.collectData(getMavenTCPData());
 
                 resetStatistics();
             }
