@@ -2,6 +2,8 @@ package node;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -11,9 +13,13 @@ public class Node {
 
     private UDPNode udpNode;
     private static Properties tcpProperties;
+    private static List<TCPNode> connections;
+
+    //private static int connections = 0;
 
     public Node() {
         tcpProperties = new Properties();
+        connections = new ArrayList<>();
 
         try {
             tcpProperties.load(Node.class.getResourceAsStream("/node/tcp.properties"));
@@ -25,6 +31,7 @@ public class Node {
                 ServerSocket nodeSocket = new ServerSocket(Integer.parseInt(tcpProperties.getProperty("port")));
 
                 TCPNode cHandler = new TCPNode(nodeSocket.accept());
+                connections.add(cHandler);
                 cHandler.start();
             }
         } catch (IOException e) {
@@ -36,5 +43,9 @@ public class Node {
 
     public static Properties getTcpProperties() {
         return tcpProperties;
+    }
+
+    public static int getConnectionsSize() {
+        return connections.size();
     }
 }

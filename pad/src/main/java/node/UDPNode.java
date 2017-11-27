@@ -51,7 +51,8 @@ public class UDPNode extends Thread {
         int proxyUdpUnicastPort = Integer.parseInt(msg.split(":")[2]);
 
         if (command.equals("statistics")) {
-            response = "#OfConnections" + ":" + tcpProperties.getProperty("host") + ":" + tcpProperties.getProperty("port");
+            String nrOfConnections = String.valueOf(Node.getConnectionsSize());
+            response = nrOfConnections + ":" + tcpProperties.getProperty("host") + ":" + tcpProperties.getProperty("port");
         }
         else {
             response = "pong";
