@@ -38,7 +38,8 @@ public class TCPProxyForClient extends Thread {
 
                     received = in.readLine();
                     if (received != null) {
-                        udpProxyMulticast.sendCommand("ping");
+                        //udpProxyMulticast.sendCommand("ping");
+                        udpProxyMulticast.sendCommand("statistics:localhost");
 
                         DataAggregator.setCommand(received);
                     }

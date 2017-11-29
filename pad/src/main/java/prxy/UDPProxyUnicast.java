@@ -41,9 +41,9 @@ public class UDPProxyUnicast extends Thread {
 
                 String sentence = new String( receivePacket.getData());
 
-                if (sentence.contains("pong")) {   //message structure "pong::"
+                /*if (sentence.contains("pong")) {   //message structure "pong::"
                     TCPProxyForClient.setNrOfNodes(TCPProxyForClient.getNrOfNodes() + 1);
-                }
+                }*/
                 if (sentence.contains("statistics")) {  //message structure "statistics:TCP_host:TCP_port"
                     StatisticsAnalyzer.updateStatistics(sentence);
                 }
