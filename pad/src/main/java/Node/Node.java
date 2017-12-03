@@ -27,11 +27,13 @@ public class Node {
             udpNode = new UDPNode();
             udpNode.start();
 
-            while (true) {
-                ServerSocket nodeSocket = new ServerSocket(Integer.parseInt(tcpProperties.getProperty("port")));
+            System.out.println("here");
+            ServerSocket nodeSocket = new ServerSocket(Integer.parseInt(tcpProperties.getProperty("port")));
 
+            while (true) {
                 TCPNode cHandler = new TCPNode(nodeSocket.accept());
                 connections.add(cHandler);
+                System.out.println("Someone connected through TCP");
                 cHandler.start();
             }
         } catch (IOException e) {
@@ -47,5 +49,9 @@ public class Node {
 
     public static int getConnectionsSize() {
         return connections.size();
+    }
+
+    public static void main(String[] args) {
+        Node n = new Node();
     }
 }

@@ -1,6 +1,7 @@
 package prxy;
 
-import proxy.*;
+import prxy.utils.DataAggregator;
+import prxy.utils.StatisticsAnalyzer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,21 +13,26 @@ import java.net.Socket;
  **/
 public class TCPProxyForClient extends Thread {
 
-    private static int nrOfNodes = 0;
+    //private static int nrOfNodes = 0;
     private Socket cConnection;
     private UDPProxyMulticast udpProxyMulticast;
+    private UDPProxyUnicast udpProxyUnicast;
     private StatisticsAnalyzer statisticsAnalyzer;
 
-    public TCPProxyForClient(Socket clientConnection, UDPProxyMulticast udpProxyMulticast) {
+    public TCPProxyForClient(Socket clientConnection) {
         this.cConnection = clientConnection;
-        this.udpProxyMulticast = udpProxyMulticast;
-        this.statisticsAnalyzer = new StatisticsAnalyzer(nrOfNodes);
+        this.udpProxyMulticast = new UDPProxyMulticast();
+
+        this.statisticsAnalyzer = new StatisticsAnalyzer();
+
+        this.udpProxyUnicast = new UDPProxyUnicast(statisticsAnalyzer);
+        udpProxyUnicast.start();
     }
 
     @Override
     public void run() {
         /*process Client commands*/
-        statisticsAnalyzer.start();
+        //statisticsAnalyzer.start();
 
         try {
 
@@ -38,9 +44,16 @@ public class TCPProxyForClient extends Thread {
 
                     received = in.readLine();
                     if (received != null) {
-                        //udpProxyMulticast.sendCommand("ping");
-                        udpProxyMulticast.sendCommand("statistics:localhost");
+                        System.out.println("Received command from client: " + received);
+                        udpProxyMulticast.sendCommand("statistics");
 
+                        try {
+                            Thread.sleep(750);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        statisticsAnalyzer.start();
                         DataAggregator.setCommand(received);
                     }
                 }
@@ -56,11 +69,11 @@ public class TCPProxyForClient extends Thread {
         }
     }
 
-    public static void setNrOfNodes(int nrOfNodes) {
-        TCPProxyForClient.nrOfNodes = nrOfNodes;
-    }
+   // public static void setNrOfNodes(int nrOfNodes) {
+   //     TCPProxyForClient.nrOfNodes = nrOfNodes;
+   // }
 
-    public static int getNrOfNodes() {
+   /* public static int getNrOfNodes() {
         return nrOfNodes;
-    }
+    }*/
 }

@@ -12,8 +12,8 @@ import java.util.Properties;
  **/
 public class UDPNode extends Thread {
 
-    private final static String INET_ADDR = "224.0.0.3";
-    private final static int PORT = 8888;
+    private final static String INET_ADDR = "228.5.6.7";
+    private final static int PORT = 5000;
 
     @Override
     public void run() {
@@ -33,6 +33,8 @@ public class UDPNode extends Thread {
                 String msg = new String(buf, 0, buf.length);
 
                 if (!msg.isEmpty()) {
+
+                    System.out.println("UDP multicast: received command: " + msg);
                     sendResponse(msg);
                 }
             }
@@ -48,11 +50,14 @@ public class UDPNode extends Thread {
 
         String command = msg.split(":")[0];
         String proxyUdpUnicastHost = msg.split(":")[1];
-        int proxyUdpUnicastPort = Integer.parseInt(msg.split(":")[2]);
+        int proxyUdpUnicastPort = 7777;//Integer.parseInt(msg.split(":")[2]);
 
         if (command.equals("statistics")) {
+            System.out.println("Proxy required statistics.");
             String nrOfConnections = String.valueOf(Node.getConnectionsSize());
-            response = nrOfConnections + ":" + tcpProperties.getProperty("host") + ":" + tcpProperties.getProperty("port");
+            response = "statistics:" + nrOfConnections + ":" + tcpProperties.getProperty("host") + ":" + tcpProperties.getProperty("port");
+
+            System.out.println("Node sent stats: " + response);
         }
         else {
             response = "pong";

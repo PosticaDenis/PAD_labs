@@ -4,36 +4,25 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.Properties;
 
 /**
  * Created by c-denipost on 27-Nov-17.
  **/
 public class UDPProxyMulticast{
 
-    private Properties multicastP;
-    //private Properties unicastP;
-
-    public UDPProxyMulticast() {
-
-        multicastP = new Properties();
-
-        try {
-            multicastP.load(UDPProxyMulticast.class.getResourceAsStream("/proxy/multicast.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Couldn't find properties file/s!");
-        }
-    }
+    /**
+     * @param command
+     */
 
     public void sendCommand(String command) {
 
-        /*send to all nodes in the group command to count their connections and to send a message containing # of
-        connections of the node, its UDP uni-cast host and port*/
+        String unicastHost = Proxy.getUnicastP().getProperty("host");
+        String unicastPort = Proxy.getUnicastP().getProperty("port");
+        command = command + ":" + unicastHost + ":" + unicastPort;
 
         try {
-            InetAddress group = InetAddress.getByName(multicastP.getProperty("group"));
-            int port = Integer.parseInt(multicastP.getProperty("port"));
+            InetAddress group = InetAddress.getByName(Proxy.getMulticastP().getProperty("group"));
+            int port = Integer.parseInt(Proxy.getMulticastP().getProperty("port"));
 
             DatagramSocket serverSocket = new DatagramSocket();
 

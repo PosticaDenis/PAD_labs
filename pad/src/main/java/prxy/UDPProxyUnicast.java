@@ -1,27 +1,21 @@
 package prxy;
 
+import prxy.utils.StatisticsAnalyzer;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.util.Properties;
 
 /**
  * Created by c-denipost on 27-Nov-17.
  **/
 public class UDPProxyUnicast extends Thread {
 
-    private Properties unicastP;
+    private StatisticsAnalyzer sAnalyzer;
 
-    public UDPProxyUnicast() {
+    public UDPProxyUnicast(StatisticsAnalyzer sAnalyzer) {
 
-        unicastP = new Properties();
-
-        try {
-            unicastP.load(UDPProxyMulticast.class.getResourceAsStream("/proxy/unicast.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Could not locate uni-cast properties file!");
-        }
+        this.sAnalyzer = sAnalyzer;
     }
 
     @Override
@@ -29,23 +23,30 @@ public class UDPProxyUnicast extends Thread {
 
         try {
 
-            int port = Integer.parseInt(unicastP.getProperty("port"));
+            int port = Integer.parseInt(Proxy.getUnicastP().getProperty("port"));
 
             DatagramSocket serverSocket = new DatagramSocket(port);
             byte[] receiveData = new byte[1024];
 
+            System.out.println("Proxy unicast listens");
+            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+
             while(true)
             {
-                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+
                 serverSocket.receive(receivePacket);
 
-                String sentence = new String( receivePacket.getData());
+                String stat = new String(receivePacket.getData());
 
-                /*if (sentence.contains("pong")) {   //message structure "pong::"
-                    TCPProxyForClient.setNrOfNodes(TCPProxyForClient.getNrOfNodes() + 1);
-                }*/
-                if (sentence.contains("statistics")) {  //message structure "statistics:TCP_host:TCP_port"
-                    StatisticsAnalyzer.updateStatistics(sentence);
+                if (!stat.isEmpty()) {
+                    System.out.println("Received info about stats from Node: " + stat);
+                }
+
+                if (stat.contains("statistics")) {  //message structure "statistics:TCP_host:TCP_port"
+                    //StatisticsAnalyzer.updateStatistics(sentence);
+
+                    System.out.println("Received stats: " + stat);
+                    sAnalyzer.updateStatistics(stat);
                 }
             }
         } catch (IOException e) {
