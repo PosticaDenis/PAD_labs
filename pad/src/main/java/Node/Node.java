@@ -27,7 +27,7 @@ public class Node {
             udpNode = new UDPNode();
             udpNode.start();
 
-            System.out.println("here");
+            //System.out.println("here");
             ServerSocket nodeSocket = new ServerSocket(Integer.parseInt(tcpProperties.getProperty("port")));
 
             while (true) {
