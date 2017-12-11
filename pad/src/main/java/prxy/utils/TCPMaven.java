@@ -1,5 +1,7 @@
 package prxy.utils;
 
+import prxy.Proxy;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -19,11 +21,6 @@ public class TCPMaven extends Thread {
 
     private Socket clientSocket;
 
-    /*public static void main(String[] args) {
-        TCPMaven tcpMaven = new TCPMaven("localhost", 9562);
-        tcpMaven.start();
-    }*/
-
     public TCPMaven(String mavenHost, int mavenPort) {
 
         this.mavenHost = mavenHost;
@@ -38,7 +35,7 @@ public class TCPMaven extends Thread {
 
             //System.out.println("Proxy TCP identification");
             //Thread.sleep(5000);
-            sendCommand("identify:proxy\r");
+            sendCommand("identify:proxy:" + Proxy.getProxyId());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -52,16 +49,9 @@ public class TCPMaven extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //System.out.println("Proxy required data through TCP");
-        sendCommand("proxy:data\r");
 
+        sendCommand("proxy:data");
         String data;
-        /*BufferedReader inFromServer = null;
-        try {
-            inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
 
         while (true) {
             try {
@@ -86,7 +76,7 @@ public class TCPMaven extends Thread {
         try {
             Thread.sleep(500);
             //DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-            out.writeBytes(cmd);
+            out.writeBytes(cmd + "\r");
         } catch (Exception e) {
             e.printStackTrace();
         }

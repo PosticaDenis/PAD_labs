@@ -1,5 +1,7 @@
 package prxy;
 
+import utils.RandomString;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.AbstractList;
@@ -12,17 +14,18 @@ import java.util.Properties;
  **/
 public class Proxy {
 
-    //private UDPProxyMulticast udpProxyMulticast;
-    //private UDPProxyUnicast udpProxyUnicast;
     private List<TCPProxyForClient> tcpProxyForClients;
 
     private static Properties unicastP;
     private static Properties multicastP;
 
+    private static String id;
+
     public Proxy(int port) {
 
         unicastP = new Properties();
         multicastP = new Properties();
+        id = new RandomString().nextString();
 
         try {
             unicastP.load(UDPProxyMulticast.class.getResourceAsStream("/proxy/unicast.properties"));
@@ -31,12 +34,6 @@ public class Proxy {
             e.printStackTrace();
             System.out.println("Could not locate uni/multi-cast properties files!");
         }
-
-        //udpProxyMulticast = new UDPProxyMulticast();
-
-        //udpProxyUnicast = new UDPProxyUnicast();
-        //udpProxyUnicast.start();
-
         tcpProxyForClients = new ArrayList<>();
 
         startClientListener(port);
@@ -55,7 +52,7 @@ public class Proxy {
             }
         } catch (IOException e) {
             System.err.println("Could not listen on port " + port);
-            System.exit(-1);
+            return;//System.exit(-1);
         }
     }
 
@@ -65,6 +62,10 @@ public class Proxy {
 
     public static Properties getMulticastP() {
         return multicastP;
+    }
+
+    public static String getProxyId() {
+        return id;
     }
 
     public static void main(String[] args) {

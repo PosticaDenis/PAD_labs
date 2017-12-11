@@ -14,6 +14,7 @@ import java.net.Socket;
 public class TCPProxyForClient extends Thread {
 
     //private static int nrOfNodes = 0;
+
     private Socket cConnection;
     private UDPProxyMulticast udpProxyMulticast;
     private UDPProxyUnicast udpProxyUnicast;

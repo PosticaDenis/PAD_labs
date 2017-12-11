@@ -4,6 +4,7 @@ import prxy.utils.DataAggregator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Created by c-denipost on 27-Nov-17.
@@ -65,13 +66,14 @@ public class StatisticsAnalyzer extends Thread{
             int next = Integer.parseInt(statistics.get(i+1).split(":")[1]);
 
             if (next > current) {
-                index = i;
+                index = i + 1;
             }
         }
 
         String mavenHost = statistics.get(index).split(":")[2];
-        System.out.println("maven port " + statistics.get(index).split(":")[3]);
-        int mavenPort = Integer.parseInt(statistics.get(index).replaceAll("[^0-9]", ""));
+
+        Scanner in = new Scanner(statistics.get(index).split(":")[3]).useDelimiter("[^0-9]+");
+        int mavenPort = in.nextInt();
 
         System.out.println("Identified maven, host " + mavenHost + ", port: " + mavenPort);
 
