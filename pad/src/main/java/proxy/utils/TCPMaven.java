@@ -1,6 +1,6 @@
-package prxy.utils;
+package proxy.utils;
 
-import prxy.Proxy;
+import proxy.Proxy;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -27,14 +27,10 @@ public class TCPMaven extends Thread {
         this.mavenPort = mavenPort;
 
         try {
-
-            System.out.println("Connect to Node TCP on " + mavenHost + ":" + mavenPort);
             this.clientSocket = new Socket(mavenHost, mavenPort);
             out = new DataOutputStream(clientSocket.getOutputStream());
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-            //System.out.println("Proxy TCP identification");
-            //Thread.sleep(5000);
             sendCommand("identify:proxy:" + Proxy.getProxyId());
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,6 +56,7 @@ public class TCPMaven extends Thread {
                 if (data != null) {
 
                     System.out.println("received DATA from Maven : " + data);
+                    DataAggregator.setIsDataReceived(true);
                     DataAggregator.setData(data);
                     break;
                 }

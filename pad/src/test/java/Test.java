@@ -1,6 +1,6 @@
 import client.Client;
 import node.Node;
-import prxy.Proxy;
+import proxy.Proxy;
 
 /**
  * Created by c-denipost on 18-Nov-17.

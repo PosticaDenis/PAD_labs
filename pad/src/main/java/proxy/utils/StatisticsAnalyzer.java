@@ -1,6 +1,4 @@
-package prxy.utils;
-
-import prxy.utils.DataAggregator;
+package proxy.utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +10,6 @@ import java.util.Scanner;
 public class StatisticsAnalyzer extends Thread{
 
     private List<String> statistics;
-    //private int nrOfNodes;
     private DataAggregator dataAggregator;
     private TCPMaven tcpMaven;
 
@@ -23,35 +20,13 @@ public class StatisticsAnalyzer extends Thread{
         this.statistics = new ArrayList<>();
     }
 
-    /*@Override
-    public void run() {
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        while(true) {
-            if (statistics.size()!= 0) {
-                System.out.println("Processing statistics...");
-
-                //TCPProxyForClient.setNrOfNodes(0);
-
-                //dataAggregator.collectData(getMavenTCPData());
-
-                resetStatistics();
-            }
-        }
-    }*/
-
     @Override
     public void run() {
 
         while (statistics.size() == 0) {
             try {
                 Thread.sleep(100);
-                System.out.println("Stats size : " + statistics.size());
+                //System.out.println("Stats size : " + statistics.size());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -71,17 +46,13 @@ public class StatisticsAnalyzer extends Thread{
         }
 
         String mavenHost = statistics.get(index).split(":")[2];
-
         Scanner in = new Scanner(statistics.get(index).split(":")[3]).useDelimiter("[^0-9]+");
         int mavenPort = in.nextInt();
 
         System.out.println("Identified maven, host " + mavenHost + ", port: " + mavenPort);
 
         tcpMaven = new TCPMaven(mavenHost, mavenPort);
-
         tcpMaven.start();
-
-        //return statistics.get(index);
     }
 
     public void updateStatistics(String nodeStatistics) {

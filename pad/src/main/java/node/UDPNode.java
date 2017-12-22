@@ -60,15 +60,13 @@ public class UDPNode extends Thread {
         Scanner in = new Scanner(msg.split(":")[2]).useDelimiter("[^0-9]+");
         int proxyUdpUnicastPort = in.nextInt();
 
-        //int proxyUdpUnicastPort = 7777;//Integer.parseInt(msg.split(":")[2]);
-
         if (command.equals("statistics")) {
             System.out.println("Proxy required stats.");
 
             String nrOfConnections = String.valueOf(n.getConnectionsSize());
             response = "statistics:" + nrOfConnections + ":" + n.getTcpHost() + ":" + String.valueOf(n.getTcpPort());
 
-            System.out.println("Node with ID " + n.getNodeId() + " sent following stats: -> " + response);
+            //System.out.println("Node with ID " + n.getNodeId() + " sent following stats: -> " + response);
 
             n.setState(false);
         }

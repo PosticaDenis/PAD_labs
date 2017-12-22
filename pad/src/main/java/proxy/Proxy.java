@@ -1,10 +1,9 @@
-package prxy;
+package proxy;
 
 import utils.RandomString;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -14,14 +13,15 @@ import java.util.Properties;
  **/
 public class Proxy {
 
-    private List<TCPProxyForClient> tcpProxyForClients;
+    private static Proxy instance = null;
+
+    private static List<TCPProxyForClient> tcpProxyForClients;
 
     private static Properties unicastP;
     private static Properties multicastP;
-
     private static String id;
 
-    public Proxy(int port) {
+    private Proxy(int port) {
 
         unicastP = new Properties();
         multicastP = new Properties();
@@ -52,8 +52,15 @@ public class Proxy {
             }
         } catch (IOException e) {
             System.err.println("Could not listen on port " + port);
-            return;//System.exit(-1);
+            return;
         }
+    }
+
+    public static Proxy getInstance(int port) {
+        if (instance == null) {
+            instance = new Proxy(port);
+        }
+        return instance;
     }
 
     public static Properties getUnicastP() {
@@ -68,7 +75,11 @@ public class Proxy {
         return id;
     }
 
+    public static List<TCPProxyForClient> getTcpProxyForClients() {
+        return tcpProxyForClients;
+    }
+
     public static void main(String[] args) {
-        Proxy proxy = new Proxy(1234);
+        Proxy.getInstance(1234);
     }
 }

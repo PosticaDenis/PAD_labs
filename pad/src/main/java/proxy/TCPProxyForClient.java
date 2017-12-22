@@ -1,7 +1,7 @@
-package prxy;
+package proxy;
 
-import prxy.utils.DataAggregator;
-import prxy.utils.StatisticsAnalyzer;
+import proxy.utils.DataAggregator;
+import proxy.utils.StatisticsAnalyzer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,28 +13,21 @@ import java.net.Socket;
  **/
 public class TCPProxyForClient extends Thread {
 
-    //private static int nrOfNodes = 0;
-
     private Socket cConnection;
     private UDPProxyMulticast udpProxyMulticast;
-    private UDPProxyUnicast udpProxyUnicast;
     private StatisticsAnalyzer statisticsAnalyzer;
 
     public TCPProxyForClient(Socket clientConnection) {
         this.cConnection = clientConnection;
         this.udpProxyMulticast = new UDPProxyMulticast();
-
         this.statisticsAnalyzer = new StatisticsAnalyzer();
 
-        this.udpProxyUnicast = new UDPProxyUnicast(statisticsAnalyzer);
-        udpProxyUnicast.start();
+        UDPProxyUnicast unicast = new UDPProxyUnicast(statisticsAnalyzer);
+        unicast.start();
     }
 
     @Override
     public void run() {
-        /*process Client commands*/
-        //statisticsAnalyzer.start();
-
         try {
 
             BufferedReader in = new BufferedReader(new InputStreamReader(cConnection.getInputStream()));
@@ -59,22 +52,17 @@ public class TCPProxyForClient extends Thread {
                     }
                 }
             } catch (IOException e) {
-                //removeThread();
+                System.out.println("Something is wrong with TCP connection of the client.");
+                removeThread();
             }
-
-            in.close();
             cConnection.close();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-   // public static void setNrOfNodes(int nrOfNodes) {
-   //     TCPProxyForClient.nrOfNodes = nrOfNodes;
-   // }
+    private void removeThread() {
+        Proxy.getTcpProxyForClients().remove(this);
 
-   /* public static int getNrOfNodes() {
-        return nrOfNodes;
-    }*/
+    }
 }

@@ -1,6 +1,6 @@
-package prxy;
+package proxy;
 
-import prxy.utils.StatisticsAnalyzer;
+import proxy.utils.StatisticsAnalyzer;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -20,15 +20,11 @@ public class UDPProxyUnicast extends Thread {
 
     @Override
     public void run() {
-
         try {
-
             int port = Integer.parseInt(Proxy.getUnicastP().getProperty("port"));
 
             DatagramSocket serverSocket = new DatagramSocket(port);
             byte[] receiveData = new byte[1024];
-
-            System.out.println("Proxy unicast listens");
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 
             while(true)
@@ -38,13 +34,7 @@ public class UDPProxyUnicast extends Thread {
 
                 String stat = new String(receivePacket.getData());
 
-                if (!stat.isEmpty()) {
-                    System.out.println("Received info about stats from Node: " + stat);
-                }
-
                 if (stat.contains("statistics")) {  //message structure "statistics:TCP_host:TCP_port"
-                    //StatisticsAnalyzer.updateStatistics(sentence);
-
                     System.out.println("Received stats: " + stat);
                     sAnalyzer.updateStatistics(stat);
                 }

@@ -1,10 +1,15 @@
 package node.utils;
 
+import com.google.gson.reflect.TypeToken;
 import node.Node;
 import node.TCPNode;
+import utils.Student;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,14 +17,15 @@ import java.util.Map;
  **/
 public class TCPDataSender extends Thread {
 
-    private static String data = "data: Maven DATA";
-
+    private String nodeData;
+    private static String dat = "[]";
     private String requestNodeId;
-
     private Node n;
 
     public TCPDataSender(Node n) {
         this.n = n;
+        nodeData = Node.dataJson.toJson(n.getData());
+        //dat = nodeData;
     }
 
     public void setRequestNodeId(String requestNodeId) {
@@ -33,11 +39,35 @@ public class TCPDataSender extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        /*
+        Type listType = new TypeToken<ArrayList<Student>>(){}.getType();
+        List<Student> data = Node.dataJson.fromJson(nodeData, listType);
+
+        data.addAll(Node.dataJson.fromJson(dat, listType));
+
+        nodeData = Node.dataJson.toJson(data);*/
+        nodeData = processAsJson(dat, nodeData);
+
         sendDataToProxy();
     }
 
+    private String processAsJson(String update, String toUpdate) {
+
+        Type listType = new TypeToken<ArrayList<Student>>(){}.getType();
+        List<Student> jsonData = Node.dataJson.fromJson(update, listType);
+        jsonData.addAll(Node.dataJson.fromJson(toUpdate, listType));
+        return Node.dataJson.toJson(jsonData);
+    }
+
     public void updateData(String update) {
-        data += update;
+
+        /*Type listType = new TypeToken<ArrayList<Student>>(){}.getType();
+        List<Student> data = Node.dataJson.fromJson(update, listType);
+
+        data.addAll(Node.dataJson.fromJson(dat, listType));*/
+        //dat = Node.dataJson.toJson(data);
+        dat = processAsJson(update, dat);
     }
 
     private void send(TCPNode s, String cmd) {
@@ -45,7 +75,6 @@ public class TCPDataSender extends Thread {
             DataOutputStream out = new DataOutputStream(s.getNodeSocket().getOutputStream());
             out.writeBytes(cmd + "\r");
         } catch (IOException e) {
-            //e.printStackTrace();
             System.out.println("Error sending command: " + cmd + " to the Nodes which are connected to the current Node.");
         }
     }
@@ -76,26 +105,26 @@ public class TCPDataSender extends Thread {
                 send(tcpNode, cmd);
             }
         }
-
     }
 
     private void sendDataToProxy() {
-        send(n.getProxyConnection(), data);
+        System.out.println("Sending data to proxy: " + nodeData);
+        send(n.getProxyConnection(), nodeData);
     }
 
     public void sendDataToMaven() {
 
-        String data = "data:DATA collected by Node(" + n.getNodeId() + ").";
+        String data = "data`" + nodeData;
 
         TCPNode isConnected = n.getIsConnected().get(requestNodeId);
         TCPNode connectedTo = n.getConnectedTo().get(requestNodeId);
 
         if (isConnected != null) {
-            //System.out.println("The maven Node is connected to the Node from which data was requested.");
+            //System.out.println("The maven Node is connected to the Node from which nodeData was requested.");
             send(isConnected, data);
         }
         else {
-            //System.out.println("The Node from which data was requested is connected to the maven Node.");
+            //System.out.println("The Node from which nodeData was requested is connected to the maven Node.");
             send(connectedTo, data);
         }
     }

@@ -14,6 +14,7 @@ public class TCPNode extends Thread{
     private Node n;
     private TCPDataSender dataSender;
     private DataOutputStream out;
+    private String data = "";
 
     public TCPNode(Node n, Socket s) {
         this.nodeSocket = s;
@@ -48,38 +49,33 @@ public class TCPNode extends Thread{
 
                             n.setIsConnected(received.split(":")[2], this);
                             System.out.println("Node with ID: " + received.split(":")[2] + " has connected.");
-
-
                         }
                         if (received.startsWith("proxy:data")) {
-                            System.out.println("Proxy required data.");
+                            System.out.println("Proxy required data from MAVEN.");
                             n.setState(true);
 
                             dataSender.collectDataFromNodes();
-
                             dataSender.start();
                         }
                         if (received.startsWith("node:data:")) {
-                            System.out.println("Maven required data.");
+                            System.out.println("Maven or another node required data.");
 
                             if (!n.isState()) {
                                 n.setState(true);
-
                                 String requestNodeId = received.split(":")[2];
+
                                 dataSender.setRequestNodeId(requestNodeId);
-
                                 dataSender.collectDataFromNodes();
-
                                 dataSender.sendDataToMaven();
                             }
                             else {
                                 System.out.println("Node already sent data. Ignoring request.");
                             }
                         }
-                        if (received.startsWith("data:")) {
+                        if (received.startsWith("data`")) {
 
-                            System.out.println("Node (" + n.getNodeId() + ") received data from another node: " + received.split(":")[1]);
-                            dataSender.updateData("|" + received.split(":")[1]);
+                            System.out.println("Node (" + n.getNodeId() + ") received data from another node: " + received.split("`")[1]);
+                            dataSender.updateData(received.split("`")[1]);
                         }
                     }
                 }

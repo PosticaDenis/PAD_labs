@@ -1,4 +1,4 @@
-package prxy.utils;
+package proxy.utils;
 
 /**
  * Created by c-denipost on 27-Nov-17.
@@ -7,14 +7,19 @@ public class DataAggregator extends Thread {
 
     private static String command = "No command";
     private static String data = "No data";
+    private static boolean isDataReceived = false;
 
     @Override
     public void run() {
 
         System.out.println("Started Data Aggregator");
         while (true) {
-            if (data.equals("No data")) {
-                System.out.println("Processing data from MAVEN..." + data + "with command" + command);
+            if (isDataReceived) {
+                System.out.println("Processing data from MAVEN: " + data + "; with command " + command);
+
+
+
+                isDataReceived = false;
                 break;
             }
         }
@@ -29,5 +34,9 @@ public class DataAggregator extends Thread {
 
         System.out.println("Updated aggregator with data: " + data);
         DataAggregator.data = data;
+    }
+
+    public static void setIsDataReceived(boolean isDataReceived) {
+        DataAggregator.isDataReceived = isDataReceived;
     }
 }

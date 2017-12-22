@@ -1,4 +1,6 @@
-package prxy;
+package proxy;
+
+import proxy.utils.DataAggregator;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
