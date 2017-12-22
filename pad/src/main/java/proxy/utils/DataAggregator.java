@@ -6,7 +6,7 @@ package proxy.utils;
 public class DataAggregator extends Thread {
 
     private static String command = "No command";
-    private static String data = "No data";
+    private static String data;
     private static boolean isDataReceived = false;
 
     @Override
@@ -17,10 +17,8 @@ public class DataAggregator extends Thread {
             if (isDataReceived) {
                 System.out.println("Processing data from MAVEN: " + data + "; with command " + command);
 
-
-
                 isDataReceived = false;
-                break;
+                //break;
             }
         }
     }

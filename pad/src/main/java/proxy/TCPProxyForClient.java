@@ -20,7 +20,9 @@ public class TCPProxyForClient extends Thread {
     public TCPProxyForClient(Socket clientConnection) {
         this.cConnection = clientConnection;
         this.udpProxyMulticast = new UDPProxyMulticast();
+
         this.statisticsAnalyzer = new StatisticsAnalyzer();
+        statisticsAnalyzer.start();
 
         UDPProxyUnicast unicast = new UDPProxyUnicast(statisticsAnalyzer);
         unicast.start();
@@ -46,8 +48,6 @@ public class TCPProxyForClient extends Thread {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-
-                        statisticsAnalyzer.start();
                         DataAggregator.setCommand(received);
                     }
                 }

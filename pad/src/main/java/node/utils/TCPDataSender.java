@@ -25,7 +25,6 @@ public class TCPDataSender extends Thread {
     public TCPDataSender(Node n) {
         this.n = n;
         nodeData = Node.dataJson.toJson(n.getData());
-        //dat = nodeData;
     }
 
     public void setRequestNodeId(String requestNodeId) {
@@ -40,15 +39,7 @@ public class TCPDataSender extends Thread {
             e.printStackTrace();
         }
 
-        /*
-        Type listType = new TypeToken<ArrayList<Student>>(){}.getType();
-        List<Student> data = Node.dataJson.fromJson(nodeData, listType);
-
-        data.addAll(Node.dataJson.fromJson(dat, listType));
-
-        nodeData = Node.dataJson.toJson(data);*/
         nodeData = processAsJson(dat, nodeData);
-
         sendDataToProxy();
     }
 
@@ -61,13 +52,8 @@ public class TCPDataSender extends Thread {
     }
 
     public void updateData(String update) {
-
-        /*Type listType = new TypeToken<ArrayList<Student>>(){}.getType();
-        List<Student> data = Node.dataJson.fromJson(update, listType);
-
-        data.addAll(Node.dataJson.fromJson(dat, listType));*/
-        //dat = Node.dataJson.toJson(data);
         dat = processAsJson(update, dat);
+        System.out.println("data after update: " + dat);
     }
 
     private void send(TCPNode s, String cmd) {
